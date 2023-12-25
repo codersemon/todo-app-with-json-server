@@ -38,7 +38,7 @@
     {
       "task_name": "Reading newspaper",
       "due_date": "2023-12-26",
-      "priyority": "General",
+      "priyority": "Important",
       "status": "Deleted",
       "id": 6
     },
@@ -100,8 +100,9 @@
       "task_name": "dsfadfa",
       "due_date": "2023-12-26",
       "priyority": "General",
-      "status": "Pending",
-      "id": 14
+      "status": "Completed",
+      "id": 14,
+      "completedAt": 1703525288110
     },
     {
       "task_name": "Reading newspaper",
@@ -110,6 +111,21 @@
       "status": "Completed",
       "id": 15,
       "completedAt": 1703523909451
+    },
+    {
+      "task_name": "today task",
+      "due_date": "2023-12-25",
+      "priyority": "Important",
+      "status": "Completed",
+      "id": 16,
+      "completedAt": 1703525410827
+    },
+    {
+      "task_name": "pending task",
+      "due_date": "2023-12-30",
+      "priyority": "Important",
+      "status": "Pending",
+      "id": 17
     }
   ]
 }

@@ -366,7 +366,7 @@ function App() {
                       );
                     })
                   ) : (
-                    <p className="text-center">No Task Found</p>
+                    <p className="text-center">JSON SERVER IS OFFLINE NOW / No Task Found</p>
                   )}
                 </ul>
               </div>
