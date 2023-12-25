@@ -69,7 +69,10 @@ function App() {
       Toast.fire({ title: "Task added" });
 
       // reload all tasks
-      getAllTask();
+      getAllTask('Pending');
+
+      // set pending nav active 
+    setLeftSidebarNav('Pending');
     }
   };
 
@@ -121,13 +124,42 @@ function App() {
 
   // invoke getAllTask function once on load
   useEffect(() => {
-    getAllTask('Today');
+    getAllTask('Pending');
   }, []);
+
+  /**
+   * ACTION TO COMPLETE TASK AND UPDATE DATABASE
+   */
+  const handleTaskComplete = async (id) => {
+    await axios.patch(`http://localhost:7000/todos/${id}`, {status: 'Completed', completedAt: Date.now()});
+
+    // set completed nav active 
+    setLeftSidebarNav('Completed');
+    // load task according to the nav item
+    getAllTask('Completed');
+  }
+
+  /**
+   * ACTION TO SET TASK AS IMPORTANT / GENERAL
+   */
+  const handleImportantOrGeneral = async(id) => {
+    const task = await axios.get(`http://localhost:7000/todos/${id}`);
+
+    if(task.data.priyority == 'General'){
+      await axios.patch(`http://localhost:7000/todos/${id}`, {priyority: 'Important'});
+    }else{
+      await axios.patch(`http://localhost:7000/todos/${id}`, {priyority: 'General'});
+    }
+
+    // load task according to the nav item
+    getAllTask(leftSidebarNav);
+  }
+
 
   /**
    * LEFT SIDEBAR NAV STATE & ACTION HANDLE
    */
-  const [leftSidebarNav, setLeftSidebarNav] = useState('Today');
+  const [leftSidebarNav, setLeftSidebarNav] = useState('Pending');
 
   // ACTION 
   const handleLeftSidebarNavItem = (taskType) => {
@@ -137,6 +169,8 @@ function App() {
     // load task according to the nav item
     getAllTask(taskType);
   }
+
+
 
   return (
     <>
@@ -170,6 +204,12 @@ function App() {
               </div>
 
               <ul className="todo_category">
+              <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Pending' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Pending')}>
+                  <label>
+                    <GrInProgress /> Pending
+                  </label>{" "}
+                  <span className="counter">10</span>
+                </li>
                 <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Today' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Today')}>
                   <label>
                     <IoSunnyOutline /> My Day
@@ -179,12 +219,6 @@ function App() {
                 <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Important' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Important')}>
                   <label>
                     <CiStar /> Important
-                  </label>{" "}
-                  <span className="counter">10</span>
-                </li>
-                <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Pending' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Pending')}>
-                  <label>
-                    <GrInProgress /> Pending
                   </label>{" "}
                   <span className="counter">10</span>
                 </li>
@@ -265,7 +299,10 @@ function App() {
                         >
                           <div className="task_top d-flex justify-content-between align-items-center">
                             <p className="content">
-                              <span>
+                              <span onClick={(e) => {
+                                e.stopPropagation();
+                                handleTaskComplete(item.id);
+                              }}>
                                 {item.status == 'Pending' ? <RiCheckboxBlankCircleLine /> : ''}
                                 {item.status == 'Completed' ? <IoMdCheckmarkCircleOutline /> : ''}
             
@@ -277,6 +314,7 @@ function App() {
                                 title="Mark as important"
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  handleImportantOrGeneral(item.id)
                                 }}
                               >
                                 {item.priyority == "General" ? (
@@ -318,7 +356,7 @@ function App() {
               <div className="sidebar_right p-3">
                 <SingeTaskOptions
                   sidebarStateAction={handleRightSidebar}
-                  statusId={rightSidebar}
+                  statusId={rightSidebar} handleTaskComplete={handleTaskComplete}
                 />
               </div>
             </Col>

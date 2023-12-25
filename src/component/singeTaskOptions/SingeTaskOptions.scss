@@ -1,3 +1,12 @@
+.sidebar_hide_btn{
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+
+    svg{
+        width: 20px;
+        height: 20px;
+    }
+}
 .task_option_list{
     li{
         background-color: #fff;
@@ -27,6 +36,11 @@
 
         span{
             margin-left: 5px;
+        }
+
+        &.complete_date{
+            background-color: var(--primary-color);
+            color: #fff;
         }
     }
 }
