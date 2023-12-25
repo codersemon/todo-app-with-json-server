@@ -1,0 +1,31 @@
+:root{
+    --primary-color: #2ecc71;
+    --secondary-color: #3498db;
+    --yellow: #f1c40f;
+    --red: #e74c3c;
+    --bg-default: #f3f3f3;
+    --hover-bg-default: #e8e8e8;
+
+    --box-shadow-1: ;
+    --border-default: 1px solid #ccc;
+    --transition-default: ;
+}
+*{
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    background-color: var(--bg-default) !important;
+}
+
+// reset css 
+.card-title{
+    margin-bottom: 0;
+}
+p{
+    margin: 0;
+}
+ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}

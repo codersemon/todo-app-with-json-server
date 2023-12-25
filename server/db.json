@@ -1,0 +1,52 @@
+{
+  "todos": [
+    {
+      "task_name": "Reading newspaper",
+      "due_date": "2024-01-01",
+      "priyority": "General",
+      "status": "Pending",
+      "id": 1
+    },
+    {
+      "task_name": "Doing homework",
+      "due_date": "2024-01-06",
+      "priyority": "Important",
+      "status": "Completed",
+      "id": 2
+    },
+    {
+      "task_name": "বাইরে ঘুরতে যেতে হবে।",
+      "due_date": "2024-02-09",
+      "priyority": "Important",
+      "status": "Pending",
+      "id": 3
+    },
+    {
+      "task_name": "4th task",
+      "due_date": "2023-12-28",
+      "priyority": "General",
+      "id": 4
+    },
+    {
+      "task_name": "Reading newspaper",
+      "due_date": "2023-12-25",
+      "priyority": "General",
+      "status": "Pending",
+      "id": 5
+    },
+    {
+      "task_name": "Reading newspaper",
+      "due_date": "2023-12-26",
+      "priyority": "Important",
+      "status": "Deleted",
+      "id": 6
+    },
+    {
+      "task_name": "Todo app development",
+      "due_date": "2023-12-26",
+      "priyority": "Important",
+      "status": "Pending",
+      "id": 7
+    }
+  ]
+}

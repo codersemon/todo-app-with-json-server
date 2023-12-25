@@ -1,0 +1,32 @@
+.task_option_list{
+    li{
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+
+        .task_top{
+            .content{
+                span{
+                    margin-right: 5px;
+                }
+            }
+        }
+        .actions{
+            font-size: 20px;
+        }
+    }
+}
+
+.task_extra_details{
+    margin-top: 5px;
+    li{
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;  
+        margin: 5px 0;
+
+        span{
+            margin-left: 5px;
+        }
+    }
+}
