@@ -88,7 +88,7 @@ function App() {
   }-${today.getDate()}`;
 
   // get all task function
-  async function getAllTask(taskType) {
+  async function getAllTask(taskType, searchTerm) {
     let response;
 
     switch ((taskType)) {
@@ -117,6 +117,12 @@ function App() {
           `http://localhost:7000/todos?_sort=due_date&_order=asc&status=Deleted`
         );
         break;
+        case "Search":
+          response = await axios.get(
+            `http://localhost:7000/todos?_sort=due_date&_order=asc&q=${searchTerm}`
+          );
+          break;
+
     }
 
     setAllTasks(response.data);
@@ -171,6 +177,24 @@ function App() {
   }
 
 
+  /**
+   * SEARCH STATE & ACTIONS
+   */
+  const [searchInput, setSearchInput] = useState('');
+
+  // search input change action
+  const handleSearchInput = async(e) => {
+    // update input value
+    setSearchInput(e.target.value);
+
+    // const response = await axios.get(`http://localhost:7000/todos?q=${e.target.value}`);
+    // setAllTasks(response.data);
+
+    getAllTask('Search', e.target.value);
+
+  }
+
+
 
   return (
     <>
@@ -197,10 +221,8 @@ function App() {
                   name="search_text"
                   className="form-control"
                   placeholder="Search..."
+                  onChange={handleSearchInput}
                 />
-                <Button>
-                  <IoSearchOutline />
-                </Button>
               </div>
 
               <ul className="todo_category">
@@ -295,7 +317,7 @@ function App() {
                         <li
                           onClick={() => handleRightSidebar(item.id)}
                           key={index}
-                          className={leftSidebarNav}
+                          className={item.status}
                         >
                           <div className="task_top d-flex justify-content-between align-items-center">
                             <p className="content">
