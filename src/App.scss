@@ -134,9 +134,6 @@
               margin-left: 15px;
             }
           }
-          &.Important{
-            
-          }
 
 
           .task_top {
@@ -153,9 +150,7 @@
               span {
                 cursor: pointer;
               }
-              svg.important {
-                fill: var(--yellow);
-            }
+              
             }
           }
 
@@ -171,4 +166,7 @@
 
   // .sidebar_right {
   // }
+}
+svg.important {
+  fill: var(--yellow);
 }

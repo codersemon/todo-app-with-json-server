@@ -3,8 +3,8 @@ import "./App.scss";
 import Meta from "./component/meta/Meta";
 import favIcon from "../src/assets/img/favicon.png";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { IoSunnyOutline } from "react-icons/io5";
-import { CiStar, CiTrash } from "react-icons/ci";
+import { IoCalendarOutline, IoSunnyOutline } from "react-icons/io5";
+import { CiStar, CiStickyNote, CiTrash } from "react-icons/ci";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { IoMdAdd } from "react-icons/io";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
@@ -64,7 +64,7 @@ function App() {
       Toast.fire({ title: "All field required!", icon: "warning" });
     } else {
       // sending task to db
-      await axios.post("http://localhost:7000/todos", taskInput);
+      await axios.post("http://localhost:7000/todos", {...taskInput, note: ""});
 
       // reset task input after sending to db
       setTaskInput({
@@ -404,7 +404,7 @@ function App() {
                             </p>
                             <p className="actions d-flex align-items-center">
                               <span
-                                title="Mark as important"
+                                title="Priyority Control"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleImportantOrGeneral(item.id);
@@ -428,10 +428,11 @@ function App() {
                             </p>
                           </div>
                           <div className="task_bottom d-flex">
-                            <p className="due_date">
+                            <p className="due_date"><IoCalendarOutline /> {" "}
                               {inputDateToReadableDate(item.due_date)}
                             </p>{" "}
-                            |<p>Note will appear</p>
+                            {item.note && <p> | <CiStickyNote /> {item.note}</p>}
+                            
                           </div>
                         </li>
                       );
@@ -454,6 +455,7 @@ function App() {
                   setRightSidebar={setRightSidebar}
                   handleTaskComplete={handleTaskComplete}
                   handleImportantOrGeneral={handleImportantOrGeneral}
+                  getAllTask={getAllTask}
                 />
               </div>
             </Col>

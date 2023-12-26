@@ -1,6 +1,6 @@
 .sidebar_hide_btn{
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
 
     svg{
         width: 20px;
@@ -42,5 +42,17 @@
             background-color: var(--primary-color);
             color: #fff;
         }
+    }
+}
+
+.single_action_wrap{
+    gap: 5px;
+    .delete_btn{
+        background-color: var(--red) !important;
+        border-color: var(--red) !important;
+    }
+    .edit_btn{
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
     }
 }
