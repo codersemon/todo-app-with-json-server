@@ -1,7 +1,7 @@
 // dependencies
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import "./SingeTaskOptions.scss";
-import { CiStar, CiStickyNote } from "react-icons/ci";
+import { CiStickyNote } from "react-icons/ci";
 import { IoCalendarOutline } from "react-icons/io5";
 import { TbAlertTriangle } from "react-icons/tb";
 import { AiOutlineFileDone } from "react-icons/ai";
@@ -11,7 +11,7 @@ import axios from "axios";
 import { inputDateToReadableDate } from "../../utils/utils";
 import { IoIosArrowDropleft, IoMdCheckmarkCircleOutline } from "react-icons/io";
 
-const SingeTaskOptions = ({righSidebarState, setRightSidebar, handleTaskComplete}) => {
+const SingeTaskOptions = ({righSidebarState, setRightSidebar, handleTaskComplete, handleImportantOrGeneral}) => {
   // getting single task 
   const [singleTask, setSingleTask] = useState({});
 
@@ -45,19 +45,15 @@ const SingeTaskOptions = ({righSidebarState, setRightSidebar, handleTaskComplete
             <p className="content">
 
               <span onClick={() => {
-                handleTaskComplete(righSidebarState.task_id); // complete task on click
-                getSingleTask(righSidebarState.task_id); // reload single view on click
+                handleTaskComplete(singleTask.id); // complete task on click
+                getSingleTask(singleTask.id); // reload single view on click
               }}>
               {singleTask.status == 'Pending' ? <RiCheckboxBlankCircleLine /> : ''}
                                 {singleTask.status == 'Completed' ? <IoMdCheckmarkCircleOutline /> : ''}
               </span>
               <span>{singleTask.task_name}</span>
             </p>
-            <p className="actions d-flex align-items-center">
-              <span title="Mark as important">
-                <CiStar />
-              </span>
-            </p>
+            
           </div>
         </li>
       </ul>

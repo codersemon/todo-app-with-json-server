@@ -24,22 +24,21 @@ function App() {
     sidebar: false,
     task_id: "",
   });
-  // handle right sidebar action
+  // HANDLE RIGHT SIDEBAR ACTION
   const handleRightSidebar = (id) => {
-      // execute if sibebar is closed or cliked on same item which is already opened
-      setRightSidebar((prevState) => ({      
-        sidebar: !prevState.sidebar,
+    // execute if sibebar is closed or cliked on same item which is already opened
+    setRightSidebar((prevState) => ({
+      sidebar: !prevState.sidebar,
+      task_id: id,
+    }));
+
+    // execute if right sidebar opened and clicked task is not similar with opened task
+    if (rightSidebar.sidebar == true && rightSidebar.task_id != id) {
+      setRightSidebar({
+        sidebar: true,
         task_id: id,
-      }));
-
-      // execute if right sidebar opened and clicked task is not similar with opened task
-      if(rightSidebar.sidebar == true && rightSidebar.task_id != id){
-        setRightSidebar({
-          sidebar: true,
-          task_id: id
-        });
-      }
-
+      });
+    }
   };
 
   /**
@@ -49,16 +48,16 @@ function App() {
     task_name: "",
     due_date: "",
     priyority: "General",
-    status: 'Pending'
+    status: "Pending",
   });
-  // handle taskInput action
+  // HANDLE TASK INPUT ACTION
   const handleTaskInput = (e) => {
     setTaskInput((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
-  // handle new task add action
+  // HANDLE NEW TASK ADD ACTION
   const handleAddNewTask = async () => {
     // validation
     if (!taskInput.task_name || !taskInput.due_date || !taskInput.priyority) {
@@ -78,10 +77,10 @@ function App() {
       Toast.fire({ title: "Task added" });
 
       // reload all tasks
-      getAllTask('Pending');
+      getAllTask("Pending");
 
-      // set pending nav active 
-    setLeftSidebarNav('Pending');
+      // set pending nav active
+      setLeftSidebarNav("Pending");
     }
   };
 
@@ -90,17 +89,17 @@ function App() {
    */
   const [allTasks, setAllTasks] = useState([]);
 
-  // creating today date like stored in db 
+  // creating today date like stored in db
   const today = new Date();
   const todayFormat = `${today.getFullYear()}-${
     today.getMonth() + 1
   }-${today.getDate()}`;
 
-  // get all task function
+  // GET ALL TASK FUNCTION
   async function getAllTask(taskType, searchTerm) {
     let response;
 
-    switch ((taskType)) {
+    switch (taskType) {
       case "Today":
         response = await axios.get(
           `http://localhost:7000/todos?_sort=due_date&_order=desc&due_date=${todayFormat}&status=Pending`
@@ -126,12 +125,11 @@ function App() {
           `http://localhost:7000/todos?_sort=due_date&_order=asc&status=Deleted`
         );
         break;
-        case "Search":
-          response = await axios.get(
-            `http://localhost:7000/todos?_sort=due_date&_order=asc&q=${searchTerm}`
-          );
-          break;
-
+      case "Search":
+        response = await axios.get(
+          `http://localhost:7000/todos?_sort=due_date&_order=asc&q=${searchTerm}`
+        );
+        break;
     }
 
     setAllTasks(response.data);
@@ -139,71 +137,101 @@ function App() {
 
   // invoke getAllTask function once on load
   useEffect(() => {
-    getAllTask('Pending');
+    getAllTask("Pending");
   }, []);
 
   /**
    * ACTION TO COMPLETE TASK AND UPDATE DATABASE
    */
   const handleTaskComplete = async (id) => {
-    await axios.patch(`http://localhost:7000/todos/${id}`, {status: 'Completed', completedAt: Date.now()});
+    // getting task which status will be updated
+    const task = await axios.get(`http://localhost:7000/todos/${id}`);
 
-    // set completed nav active 
-    setLeftSidebarNav('Completed');
-    // load task according to the nav item
-    getAllTask('Completed');
-  }
+    if (task.data.status == "Pending") {
+      // set task status 'Completed' if task status is 'Pending'
+      await axios.patch(`http://localhost:7000/todos/${id}`, {
+        status: "Completed",
+        completedAt: Date.now(),
+      });
+
+      // set 'Completed' nav active
+      setLeftSidebarNav("Completed");
+      // load task according to the nav item
+      getAllTask("Completed");
+
+      Toast.fire({ title: "Task Completed", timer: 2000 });
+    } else if (task.data.status == "Completed") {
+      // set task status 'Pending' if task status is 'Completed'
+      await axios.patch(`http://localhost:7000/todos/${id}`, {
+        status: "Pending",
+        completedAt: "",
+      });
+
+      // set 'Pending' nav active
+      setLeftSidebarNav("Pending");
+      // load task according to the nav item
+      getAllTask("Pending");
+
+      Toast.fire({ title: "Task set as Pending", timer: 2000 });
+    }
+  };
 
   /**
    * ACTION TO SET TASK AS IMPORTANT / GENERAL
    */
-  const handleImportantOrGeneral = async(id) => {
+  const handleImportantOrGeneral = async (id) => {
+    // getting task which priyority will be changed
     const task = await axios.get(`http://localhost:7000/todos/${id}`);
 
-    if(task.data.priyority == 'General'){
-      await axios.patch(`http://localhost:7000/todos/${id}`, {priyority: 'Important'});
-    }else{
-      await axios.patch(`http://localhost:7000/todos/${id}`, {priyority: 'General'});
+    if (task.data.priyority == "General") {
+      // change 'General' to 'Important' priyority
+      await axios.patch(`http://localhost:7000/todos/${id}`, {
+        priyority: "Important",
+      });
+
+      Toast.fire({ title: "Task set as Important", timer: 2000 });
+    } else {
+      // change 'Important' to 'General' priyority
+      await axios.patch(`http://localhost:7000/todos/${id}`, {
+        priyority: "General",
+      });
+
+      Toast.fire({ title: "Task set as General", timer: 2000 });
     }
 
     // load task according to the nav item
     getAllTask(leftSidebarNav);
-  }
-
+  };
 
   /**
    * LEFT SIDEBAR NAV STATE & ACTION HANDLE
    */
-  const [leftSidebarNav, setLeftSidebarNav] = useState('Pending');
+  const [leftSidebarNav, setLeftSidebarNav] = useState("Pending");
 
-  // ACTION 
+  // ACTION
   const handleLeftSidebarNavItem = (taskType) => {
-    // update State 
+    // update State
     setLeftSidebarNav(taskType);
 
     // load task according to the nav item
     getAllTask(taskType);
-  }
-
+  };
 
   /**
    * SEARCH STATE & ACTIONS
    */
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
 
   // search input change action
-  const handleSearchInput = async(e) => {
+  const handleSearchInput = async (e) => {
     // update input value
     setSearchInput(e.target.value);
 
     // const response = await axios.get(`http://localhost:7000/todos?q=${e.target.value}`);
     // setAllTasks(response.data);
 
-    getAllTask('Search', e.target.value);
-
-  }
-
-
+    getAllTask("Search", e.target.value);
+  };
 
   return (
     <>
@@ -235,31 +263,56 @@ function App() {
               </div>
 
               <ul className="todo_category">
-              <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Pending' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Pending')}>
+                <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Pending" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Pending")}
+                >
                   <label>
                     <GrInProgress /> Pending
                   </label>{" "}
                   <span className="counter">10</span>
                 </li>
-                <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Today' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Today')}>
+                <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Today" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Today")}
+                >
                   <label>
                     <IoSunnyOutline /> My Day
                   </label>{" "}
                   <span className="counter">10</span>
                 </li>
-                <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Important' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Important')}>
+                <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Important" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Important")}
+                >
                   <label>
                     <CiStar /> Important
                   </label>{" "}
                   <span className="counter">10</span>
                 </li>
-                <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Completed' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Completed')}>
+                <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Completed" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Completed")}
+                >
                   <label>
                     <IoMdCheckmarkCircleOutline /> Completed
                   </label>{" "}
                   <span className="counter">10</span>
                 </li>
-                <li className={`d-flex justify-content-between align-items-center ${leftSidebarNav == 'Deleted' && 'active'}`} onClick={() => handleLeftSidebarNavItem('Deleted')}>
+                <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Deleted" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Deleted")}
+                >
                   <label>
                     <CiTrash /> Deleted
                   </label>{" "}
@@ -269,7 +322,7 @@ function App() {
             </div>
           </Col>
 
-          <Col md={rightSidebar.sidebar == false ? "9" : "6"}> 
+          <Col md={rightSidebar.sidebar == false ? "9" : "6"}>
             <div className="content_middle p-5">
               <div className="new_task_wrap">
                 <Row className="gx-2">
@@ -330,13 +383,22 @@ function App() {
                         >
                           <div className="task_top d-flex justify-content-between align-items-center">
                             <p className="content">
-                              <span onClick={(e) => {
-                                e.stopPropagation();
-                                handleTaskComplete(item.id);
-                              }}>
-                                {item.status == 'Pending' ? <RiCheckboxBlankCircleLine /> : ''}
-                                {item.status == 'Completed' ? <IoMdCheckmarkCircleOutline /> : ''}
-            
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTaskComplete(item.id);
+                                }}
+                              >
+                                {item.status == "Pending" ? (
+                                  <RiCheckboxBlankCircleLine />
+                                ) : (
+                                  ""
+                                )}
+                                {item.status == "Completed" ? (
+                                  <IoMdCheckmarkCircleOutline />
+                                ) : (
+                                  ""
+                                )}
                               </span>
                               {item.task_name}
                             </p>
@@ -345,7 +407,7 @@ function App() {
                                 title="Mark as important"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleImportantOrGeneral(item.id)
+                                  handleImportantOrGeneral(item.id);
                                 }}
                               >
                                 {item.priyority == "General" ? (
@@ -375,7 +437,9 @@ function App() {
                       );
                     })
                   ) : (
-                    <p className="text-center">JSON SERVER IS OFFLINE NOW / No Task Found</p>
+                    <p className="text-center">
+                      JSON SERVER IS OFFLINE NOW / No Task Found
+                    </p>
                   )}
                 </ul>
               </div>
@@ -387,8 +451,9 @@ function App() {
               <div className="sidebar_right p-3">
                 <SingeTaskOptions
                   righSidebarState={rightSidebar}
-                  setRightSidebar={setRightSidebar} 
+                  setRightSidebar={setRightSidebar}
                   handleTaskComplete={handleTaskComplete}
+                  handleImportantOrGeneral={handleImportantOrGeneral}
                 />
               </div>
             </Col>
