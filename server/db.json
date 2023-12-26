@@ -123,7 +123,7 @@
     {
       "task_name": "pending task",
       "due_date": "2023-12-30",
-      "priyority": "Important",
+      "priyority": "General",
       "status": "Pending",
       "id": 17
     }

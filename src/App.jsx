@@ -6,7 +6,6 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { IoSunnyOutline } from "react-icons/io5";
 import { CiStar, CiTrash } from "react-icons/ci";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-import { IoSearchOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -27,10 +26,20 @@ function App() {
   });
   // handle right sidebar action
   const handleRightSidebar = (id) => {
-    setRightSidebar((prevState) => ({
-      sidebar: !prevState.sidebar,
-      task_id: id,
-    }));
+      // execute if sibebar is closed or cliked on same item which is already opened
+      setRightSidebar((prevState) => ({      
+        sidebar: !prevState.sidebar,
+        task_id: id,
+      }));
+
+      // execute if right sidebar opened and clicked task is not similar with opened task
+      if(rightSidebar.sidebar == true && rightSidebar.task_id != id){
+        setRightSidebar({
+          sidebar: true,
+          task_id: id
+        });
+      }
+
   };
 
   /**
@@ -377,8 +386,9 @@ function App() {
             <Col md="3">
               <div className="sidebar_right p-3">
                 <SingeTaskOptions
-                  sidebarStateAction={handleRightSidebar}
-                  statusId={rightSidebar} handleTaskComplete={handleTaskComplete}
+                  righSidebarState={rightSidebar}
+                  setRightSidebar={setRightSidebar} 
+                  handleTaskComplete={handleTaskComplete}
                 />
               </div>
             </Col>

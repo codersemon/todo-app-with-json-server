@@ -11,7 +11,7 @@ import axios from "axios";
 import { inputDateToReadableDate } from "../../utils/utils";
 import { IoIosArrowDropleft, IoMdCheckmarkCircleOutline } from "react-icons/io";
 
-const SingeTaskOptions = ({sidebarStateAction, statusId, handleTaskComplete}) => {
+const SingeTaskOptions = ({righSidebarState, setRightSidebar, handleTaskComplete}) => {
   // getting single task 
   const [singleTask, setSingleTask] = useState({});
 
@@ -20,16 +20,24 @@ const SingeTaskOptions = ({sidebarStateAction, statusId, handleTaskComplete}) =>
     setSingleTask(response.data);
   }
   useEffect(() => {
-    if(statusId.sidebar == true){
-    getSingleTask(statusId.task_id);
+    if(righSidebarState.sidebar == true){
+    getSingleTask(righSidebarState.task_id);
     }
-  }, []);
+  }, [righSidebarState.task_id]);
+
+  // right sidebar close action 
+  const handleRightSidebarClose = () => {
+    setRightSidebar((prevState) => ({
+      ...prevState,
+      sidebar: false,
+    }))
+  }
   
 
   return (
     <>
     <div className="text-end mb-2">
-    <Button onClick={sidebarStateAction} className="sidebar_hide_btn"><IoIosArrowDropleft /></Button>
+    <Button onClick={handleRightSidebarClose} className="sidebar_hide_btn"><IoIosArrowDropleft /></Button>
     </div>
       <ul className="task_option_list">
         <li>
@@ -37,8 +45,8 @@ const SingeTaskOptions = ({sidebarStateAction, statusId, handleTaskComplete}) =>
             <p className="content">
 
               <span onClick={() => {
-                handleTaskComplete(statusId.task_id); // complete task on click
-                getSingleTask(statusId.task_id); // reload single view on click
+                handleTaskComplete(righSidebarState.task_id); // complete task on click
+                getSingleTask(righSidebarState.task_id); // reload single view on click
               }}>
               {singleTask.status == 'Pending' ? <RiCheckboxBlankCircleLine /> : ''}
                                 {singleTask.status == 'Completed' ? <IoMdCheckmarkCircleOutline /> : ''}
