@@ -36,9 +36,10 @@
       "task_name": "Reading newspaper",
       "due_date": "2023-12-25",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Deleted",
       "id": 5,
-      "note": ""
+      "note": "",
+      "completedAt": ""
     },
     {
       "task_name": "Reading newspaper",
@@ -52,9 +53,10 @@
       "task_name": "Todo app development",
       "due_date": "2023-12-26",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Deleted",
       "id": 7,
-      "note": ""
+      "note": "",
+      "completedAt": ""
     },
     {
       "task_name": "new task from vercel",
@@ -69,17 +71,18 @@
       "task_name": "unknown task",
       "due_date": "2023-12-25",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Deleted",
       "id": 9,
-      "note": ""
+      "note": "",
+      "completedAt": ""
     },
     {
       "task_name": "Reading newspaper",
       "due_date": "2023-12-27",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Pending",
       "id": 10,
-      "completedAt": 1703520159299,
+      "completedAt": "",
       "note": ""
     },
     {
@@ -104,34 +107,34 @@
       "task_name": "Lorem ipsum dolor sit amet. Qui quia omnis nam modi architecto aut velit consequatur. Aut eius pariatur ut voluptatem natus et repellat sint? Qui possimus aspernatur et consequuntur quisquam sit sapiente quis est corrupti pariatur sed sequi repellendus? Sed optio ullam aut sunt iusto et amet fuga aut modi enim aut ullam sunt et illum fugiat.",
       "due_date": "2023-12-20",
       "priyority": "General",
-      "status": "Pending",
+      "status": "Deleted",
       "id": 13,
       "completedAt": "",
-      "note": "আবার দেখতে হবে।"
+      "note": "Lorem ipsum dolor sit amet. Qui quia omnis nam modi architecto aut velit consequatur. Aut eius pariatur ut voluptatem natus et repellat sint? Qui possimus aspernatur et c"
     },
     {
       "task_name": "dsfadfa",
       "due_date": "2023-12-26",
-      "priyority": "General",
-      "status": "Completed",
+      "priyority": "Important",
+      "status": "Pending",
       "id": 14,
-      "completedAt": 1703607517025,
+      "completedAt": "",
       "note": ""
     },
     {
       "task_name": "Reading newspaper",
       "due_date": "2023-12-25",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Deleted",
       "id": 15,
-      "completedAt": 1703523909451,
+      "completedAt": "",
       "note": ""
     },
     {
       "task_name": "today task",
       "due_date": "2023-12-25",
       "priyority": "General",
-      "status": "Pending",
+      "status": "Deleted",
       "id": 16,
       "completedAt": "",
       "note": "do follow আপডেট নতুন"
@@ -158,9 +161,9 @@
       "task_name": "dfsafas",
       "due_date": "2023-12-07",
       "priyority": "General",
-      "status": "Completed",
+      "status": "Deleted",
       "id": 19,
-      "completedAt": 1703614397927,
+      "completedAt": "",
       "note": ""
     },
     {
@@ -192,9 +195,10 @@
       "task_name": "Reading newspaper",
       "due_date": "2023-12-29",
       "priyority": "General",
-      "status": "Pending",
+      "status": "Completed",
       "note": "",
-      "id": 23
+      "id": 23,
+      "completedAt": 1703674621545
     },
     {
       "task_name": "today task",
@@ -207,7 +211,7 @@
       "task_name": "বাঙ্গলা",
       "due_date": "2023-12-27",
       "priyority": "Important",
-      "status": "Pending",
+      "status": "Deleted",
       "note": "do follow আপডেট আবার",
       "id": 25
     }

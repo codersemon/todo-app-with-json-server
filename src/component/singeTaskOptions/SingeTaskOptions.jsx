@@ -13,6 +13,7 @@ import axios from "axios";
 import { Toast, inputDateToReadableDate } from "../../utils/utils";
 import { IoIosArrowDropleft, IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { FaRegClipboard, FaStar } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const SingeTaskOptions = ({
   righSidebarState,
@@ -20,6 +21,7 @@ const SingeTaskOptions = ({
   handleTaskComplete,
   handleImportantOrGeneral,
   getAllTask,
+  setLeftSidebarNav
 }) => {
   // getting single task
   const [singleTask, setSingleTask] = useState({});
@@ -32,7 +34,7 @@ const SingeTaskOptions = ({
     if (righSidebarState.sidebar == true) {
       getSingleTask(righSidebarState.task_id);
     }
-  }, [righSidebarState.task_id, singleTask]);
+  }, [righSidebarState.task_id]);
 
   // right sidebar close action
   const handleRightSidebarClose = () => {
@@ -88,6 +90,42 @@ const SingeTaskOptions = ({
     getAllTask("Search", taskInput.task_name);
 
     Toast.fire({ title: "Task updated!", timer: 2000 });
+  };
+
+  /**
+   * DELETE ACTION
+   */
+  const handleTrash = () => {
+    // getting confirmation from the user
+    Swal.fire({
+      title: "Are you Sure?",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete",
+      icon: "question",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        // set task status as 'Deleted'
+        axios.patch(`http://localhost:7000/todos/${singleTask.id}`, {
+          status: "Deleted",
+        });
+
+        // hide edit view if edit is opened
+        setEditView(false);
+
+        // close right sidebar 
+        handleRightSidebarClose();
+
+        // set 'Deleted' nav active
+        setLeftSidebarNav("Deleted");
+
+        // Show message to user 
+        Swal.fire("Deleted!", "", "success");
+
+        // update pending task view
+        getAllTask("Deleted");
+      }
+    });
   };
 
   return (
@@ -242,7 +280,7 @@ const SingeTaskOptions = ({
       {/* show 'EDIT & DELETE' option if task is 'PENDING' */}
       {singleTask.status == "Pending" && (
         <div className="mt-2 d-flex justify-content-end single_action_wrap">
-          <Button className="delete_btn">
+          <Button className="delete_btn" onClick={handleTrash}>
             <BsTrash />
           </Button>
           <Button

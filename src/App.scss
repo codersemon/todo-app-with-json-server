@@ -158,6 +158,12 @@
             padding-left: 20px;
             gap: 5px;
             font-size: 14px;
+
+            .class_note{
+              svg{
+                width: 30px;
+              }
+            }
           }
         }
       }
@@ -169,4 +175,7 @@
 }
 svg.important {
   fill: var(--yellow);
+}
+p.due_date {
+  min-width: 155px;
 }

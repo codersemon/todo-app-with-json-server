@@ -21,3 +21,10 @@ export const inputDateToReadableDate = (date) => {
 
   return dateObj.toLocaleString("en-US", { year: "numeric", month: "long", day: "numeric" });
 };
+
+// text trim function 
+export const trimText = (text, wordCount = 15) => {
+  const textArray = text.split(' ', wordCount);
+
+  return `${textArray.join(' ')} ${textArray.length == wordCount ? '....' : ''}`;
+}

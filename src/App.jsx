@@ -14,7 +14,7 @@ import { GrInProgress } from "react-icons/gr";
 import { useEffect, useState } from "react";
 import SingeTaskOptions from "./component/singeTaskOptions/SingeTaskOptions";
 import axios from "axios";
-import { Toast, inputDateToReadableDate } from "./utils/utils";
+import { Toast, inputDateToReadableDate, trimText } from "./utils/utils";
 
 function App() {
   /**
@@ -233,6 +233,40 @@ function App() {
     getAllTask("Search", e.target.value);
   };
 
+
+  /**
+   * TASK COUNTER STATE & ACTION
+   */
+  const [taskCounter, setTaskCounter] = useState({});
+
+  // ACTION
+  const getTaskCount = async() => {
+    // getting all task from db 
+    const response = await axios.get('http://localhost:7000/todos');
+
+    // set count by filtering data 
+    const pendingCount = response.data.filter((item) => item.status == 'Pending').length;
+    const completedCount = response.data.filter((item) => item.status == 'Completed').length;
+    const trashCount = response.data.filter((item) => item.status == 'Deleted').length;
+    const importantCount = response.data.filter((item) => item.priyority == 'Important').length;
+    const myDayCount = response.data.filter((item) => item.due_date == todayFormat && item.status == 'Pending').length;
+
+    // updating counter state 
+    setTaskCounter({
+      pendingCount,
+      completedCount,
+      trashCount,
+      importantCount,
+      myDayCount
+    })
+  }
+  
+  // invoke once task counter on load & invoke alwyas on allTask state is changed
+  useEffect(() => {
+    getTaskCount();
+  }, [allTasks])
+
+
   return (
     <>
       <Meta>
@@ -263,6 +297,17 @@ function App() {
               </div>
 
               <ul className="todo_category">
+              <li
+                  className={`d-flex justify-content-between align-items-center ${
+                    leftSidebarNav == "Today" && "active"
+                  }`}
+                  onClick={() => handleLeftSidebarNavItem("Today")}
+                >
+                  <label>
+                    <IoSunnyOutline /> My Day
+                  </label>{" "}
+                  <span className="counter">{taskCounter.myDayCount}</span>
+                </li>
                 <li
                   className={`d-flex justify-content-between align-items-center ${
                     leftSidebarNav == "Pending" && "active"
@@ -272,18 +317,7 @@ function App() {
                   <label>
                     <GrInProgress /> Pending
                   </label>{" "}
-                  <span className="counter">10</span>
-                </li>
-                <li
-                  className={`d-flex justify-content-between align-items-center ${
-                    leftSidebarNav == "Today" && "active"
-                  }`}
-                  onClick={() => handleLeftSidebarNavItem("Today")}
-                >
-                  <label>
-                    <IoSunnyOutline /> My Day
-                  </label>{" "}
-                  <span className="counter">10</span>
+                  <span className="counter">{taskCounter.pendingCount}</span>
                 </li>
                 <li
                   className={`d-flex justify-content-between align-items-center ${
@@ -294,7 +328,7 @@ function App() {
                   <label>
                     <CiStar /> Important
                   </label>{" "}
-                  <span className="counter">10</span>
+                  <span className="counter">{taskCounter.importantCount}</span>
                 </li>
                 <li
                   className={`d-flex justify-content-between align-items-center ${
@@ -305,7 +339,7 @@ function App() {
                   <label>
                     <IoMdCheckmarkCircleOutline /> Completed
                   </label>{" "}
-                  <span className="counter">10</span>
+                  <span className="counter">{taskCounter.completedCount}</span>
                 </li>
                 <li
                   className={`d-flex justify-content-between align-items-center ${
@@ -314,9 +348,9 @@ function App() {
                   onClick={() => handleLeftSidebarNavItem("Deleted")}
                 >
                   <label>
-                    <CiTrash /> Deleted
+                    <CiTrash /> Trash
                   </label>{" "}
-                  <span className="counter">10</span>
+                  <span className="counter">{taskCounter.trashCount}</span>
                 </li>
               </ul>
             </div>
@@ -382,7 +416,7 @@ function App() {
                           className={item.status}
                         >
                           <div className="task_top d-flex justify-content-between align-items-center">
-                            <p className="content">
+                            <p className="content d-flex">
                               <span
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -400,7 +434,7 @@ function App() {
                                   ""
                                 )}
                               </span>
-                              {item.task_name}
+                              {trimText(item.task_name, 20)}
                             </p>
                             <p className="actions d-flex align-items-center">
                               <span
@@ -431,7 +465,7 @@ function App() {
                             <p className="due_date"><IoCalendarOutline /> {" "}
                               {inputDateToReadableDate(item.due_date)}
                             </p>{" "}
-                            {item.note && <p> | <CiStickyNote /> {item.note}</p>}
+                            {item.note && <p> | <CiStickyNote /></p>}
                             
                           </div>
                         </li>
@@ -456,6 +490,7 @@ function App() {
                   handleTaskComplete={handleTaskComplete}
                   handleImportantOrGeneral={handleImportantOrGeneral}
                   getAllTask={getAllTask}
+                  setLeftSidebarNav={setLeftSidebarNav}
                 />
               </div>
             </Col>
