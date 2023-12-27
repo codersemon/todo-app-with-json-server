@@ -227,9 +227,7 @@ function App() {
     // update input value
     setSearchInput(e.target.value);
 
-    // const response = await axios.get(`http://localhost:7000/todos?q=${e.target.value}`);
-    // setAllTasks(response.data);
-
+    // show search result
     getAllTask("Search", e.target.value);
   };
 
@@ -248,7 +246,7 @@ function App() {
     const pendingCount = response.data.filter((item) => item.status == 'Pending').length;
     const completedCount = response.data.filter((item) => item.status == 'Completed').length;
     const trashCount = response.data.filter((item) => item.status == 'Deleted').length;
-    const importantCount = response.data.filter((item) => item.priyority == 'Important').length;
+    const importantCount = response.data.filter((item) => item.priyority == 'Important' && item.status == 'Pending').length;
     const myDayCount = response.data.filter((item) => item.due_date == todayFormat && item.status == 'Pending').length;
 
     // updating counter state 
@@ -437,7 +435,8 @@ function App() {
                               {trimText(item.task_name, 20)}
                             </p>
                             <p className="actions d-flex align-items-center">
-                              <span
+                              {/* show priyority control option only for pending task  */}
+                            {item.status == 'Pending' && <span
                                 title="Priyority Control"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -449,7 +448,7 @@ function App() {
                                 ) : (
                                   <FaStar className="important" />
                                 )}
-                              </span>
+                              </span> }
                               <span
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -460,6 +459,7 @@ function App() {
                                 <HiOutlineDotsHorizontal />
                               </span>
                             </p>
+                            
                           </div>
                           <div className="task_bottom d-flex">
                             <p className="due_date"><IoCalendarOutline /> {" "}
@@ -472,9 +472,10 @@ function App() {
                       );
                     })
                   ) : (
-                    <p className="text-center">
-                      JSON SERVER IS OFFLINE NOW / No Task Found
-                    </p>
+                    <h3 className="text-center">
+                      No Task Found <br />
+                      <img src="https://media4.giphy.com/media/YpixItKwvW5VQF3bLP/giphy.gif" alt="" />
+                    </h3>
                   )}
                 </ul>
               </div>

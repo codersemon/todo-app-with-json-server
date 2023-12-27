@@ -1,5 +1,8 @@
 // dependencies
-import { RiCheckboxBlankCircleLine } from "react-icons/ri";
+import {
+  RiCheckboxBlankCircleLine,
+  RiDeleteBin2Fill,
+} from "react-icons/ri";
 import "./SingeTaskOptions.scss";
 import { CiStar, CiStickyNote } from "react-icons/ci";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -12,7 +15,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Toast, inputDateToReadableDate } from "../../utils/utils";
 import { IoIosArrowDropleft, IoMdCheckmarkCircleOutline } from "react-icons/io";
-import { FaRegClipboard, FaStar } from "react-icons/fa";
+import { FaRegClipboard, FaStar, FaTrashRestore } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const SingeTaskOptions = ({
@@ -21,7 +24,7 @@ const SingeTaskOptions = ({
   handleTaskComplete,
   handleImportantOrGeneral,
   getAllTask,
-  setLeftSidebarNav
+  setLeftSidebarNav,
 }) => {
   // getting single task
   const [singleTask, setSingleTask] = useState({});
@@ -93,39 +96,66 @@ const SingeTaskOptions = ({
   };
 
   /**
-   * DELETE ACTION
+   * TRASH, DELETE, RESTORE ACTION
    */
-  const handleTrash = () => {
-    // getting confirmation from the user
-    Swal.fire({
-      title: "Are you Sure?",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Delete",
-      icon: "question",
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
-        // set task status as 'Deleted'
-        axios.patch(`http://localhost:7000/todos/${singleTask.id}`, {
+  const handleTrashRestoreDelete = async (type) => {
+    switch (type) {
+      // send task in 'Trash'
+      case "Trash":
+        await axios.patch(`http://localhost:7000/todos/${singleTask.id}`, {
           status: "Deleted",
         });
-
-        // hide edit view if edit is opened
-        setEditView(false);
-
-        // close right sidebar 
-        handleRightSidebarClose();
+        Toast.fire({ title: "Task moved in Trash", timer: 2000 });
 
         // set 'Deleted' nav active
         setLeftSidebarNav("Deleted");
 
-        // Show message to user 
-        Swal.fire("Deleted!", "", "success");
-
-        // update pending task view
+        // update 'Deleted' task view
         getAllTask("Deleted");
-      }
-    });
+        break;
+
+      // Permanently 'Delete' Task
+      case "Delete":
+        Swal.fire({
+          title: "Do you want to delete permanently?",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Delete",
+          icon: "question",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            axios.delete(`http://localhost:7000/todos/${singleTask.id}`);
+
+            Swal.fire("Permanently deleted!", "", "success");
+
+            // set 'Deleted' nav active
+            setLeftSidebarNav("Deleted");
+
+            // update 'Deleted' task view
+            getAllTask("Deleted");
+          }
+        });
+        break;
+
+      // Restore task in 'Pending'
+      case "Pending":
+        await axios.patch(`http://localhost:7000/todos/${singleTask.id}`, {
+          status: "Pending",
+        });
+        Toast.fire({ title: "Task moved in Pending", timer: 2000 });
+
+        // set 'Pending' nav active
+        setLeftSidebarNav("Pending");
+
+        // update 'Pending' task view
+        getAllTask("Pending");
+        break;
+    }
+
+    // hide edit view if edit is opened
+    setEditView(false);
+
+    // close right sidebar
+    handleRightSidebarClose();
   };
 
   return (
@@ -162,21 +192,23 @@ const SingeTaskOptions = ({
                   <span>{singleTask.task_name}</span>
                 </p>
 
-                <p className="actions d-flex align-items-center">
-                  <span
-                    title="Priyority Control"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleImportantOrGeneral(singleTask.id);
-                    }}
-                  >
-                    {singleTask.priyority == "General" ? (
-                      <CiStar />
-                    ) : (
-                      <FaStar className="important" />
-                    )}
-                  </span>
-                </p>
+                {singleTask.status == "Pending" && (
+                  <p className="actions d-flex align-items-center">
+                    <span
+                      title="Priyority Control"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleImportantOrGeneral(singleTask.id);
+                      }}
+                    >
+                      {singleTask.priyority == "General" ? (
+                        <CiStar />
+                      ) : (
+                        <FaStar className="important" />
+                      )}
+                    </span>
+                  </p>
+                )}
               </div>
             </li>
           </ul>
@@ -277,10 +309,13 @@ const SingeTaskOptions = ({
         </div>
       )}
 
-      {/* show 'EDIT & DELETE' option if task is 'PENDING' */}
+      {/* show 'EDIT & TRASH' button if task is 'PENDING' */}
       {singleTask.status == "Pending" && (
         <div className="mt-2 d-flex justify-content-end single_action_wrap">
-          <Button className="delete_btn" onClick={handleTrash}>
+          <Button
+            className="delete_btn"
+            onClick={() => handleTrashRestoreDelete("Trash")}
+          >
             <BsTrash />
           </Button>
           <Button
@@ -291,8 +326,30 @@ const SingeTaskOptions = ({
           </Button>
         </div>
       )}
+
+      {/* show 'RESTORE & PERMANTEN DELETE' button if task is not 'PENDING' */}
+      {singleTask.status != "Pending" && (
+        <div className="mt-2 d-flex justify-content-end single_action_wrap">
+          <Button
+            className="restore_btn"
+            title="Restore task"
+            onClick={() => handleTrashRestoreDelete("Pending")}
+          >
+            <FaTrashRestore />
+          </Button>
+
+          <Button
+            className="delete_btn"
+            title="Permanently delete"
+            onClick={() => handleTrashRestoreDelete("Delete")}
+          >
+            <RiDeleteBin2Fill />
+          </Button>
+        </div>
+      )}
     </>
   );
 };
 
 export default SingeTaskOptions;
+
